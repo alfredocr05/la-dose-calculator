@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pediatric Local Anesthetic Maximum Dose Calculator</title>
+<style>
+  :root{
+    --navy:#292347; --teal:#34A6C8; --purple:#7E56C8; --coral:#FB6A67;
+    --amber:#E0A02F; --ink:#292347; --muted:#6B6480; --line:#E4E2EA; --bg:#FFFFFF;
+    --panel:#F7F6FA;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,Helvetica,sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.5;
+       -webkit-text-size-adjust:100%}
+  .wrap{max-width:760px;margin:0 auto;padding:0 18px 60px}
+
+  header{background:var(--navy);color:#fff;padding:26px 0 24px;margin-bottom:26px}
+  header .wrap{padding-bottom:0}
+  h1{font-size:23px;line-height:1.25;font-weight:700;letter-spacing:-.01em}
+  header p{color:#B9B4C6;font-size:14px;margin-top:8px}
+
+  .calc{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+        padding:18px;margin-bottom:26px}
+  label{display:block;font-size:13px;font-weight:700;letter-spacing:.06em;
+        text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .wrow{display:flex;gap:10px;align-items:center}
+  input[type=number]{flex:1;min-width:0;font-size:30px;font-weight:700;font-family:inherit;
+    padding:12px 14px;border:2px solid var(--navy);border-radius:8px;color:var(--navy);
+    background:#fff;-moz-appearance:textfield}
+  input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .unit{font-size:22px;font-weight:700;color:var(--muted)}
+  .epi{display:flex;align-items:center;gap:10px;margin-top:14px;cursor:pointer;
+       font-size:16px;font-weight:600}
+  .epi input{width:22px;height:22px;accent-color:var(--coral)}
+
+  h2{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+     color:var(--muted);margin:26px 0 10px;padding-bottom:7px;border-bottom:2px solid var(--line)}
+
+  table{width:100%;border-collapse:collapse;font-size:15px}
+  th{text-align:left;font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+     color:var(--muted);padding:8px 6px;border-bottom:1px solid var(--line);font-weight:700}
+  th.r,td.r{text-align:right}
+  td{padding:11px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+  td.agent{font-weight:700}
+  td.agent small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+  td.ml{font-weight:700;font-size:20px;color:var(--teal);white-space:nowrap}
+  td.mg{color:var(--muted);font-size:13px;white-space:nowrap}
+  tr.capped td.ml{color:var(--amber)}
+  .capnote{display:block;font-size:11px;font-weight:400;color:var(--amber)}
+
+  .note{background:#FDEDED;border-left:4px solid var(--coral);border-radius:6px;
+        padding:14px 16px;margin:22px 0;font-size:14px}
+  .note b{display:block;margin-bottom:5px}
+  ul{margin:8px 0 0 18px;font-size:14px;color:var(--muted)}
+  li{margin-bottom:5px}
+
+  .dl{display:block;background:var(--navy);color:#fff;text-decoration:none;
+      border-radius:10px;padding:16px 18px;margin:24px 0 0;font-weight:700;font-size:16px}
+  .dl span{display:block;font-weight:400;font-size:13px;color:#B9B4C6;margin-top:4px}
+
+  footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);
+         font-size:13px;color:var(--muted)}
+  footer b{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>Pediatric Local Anesthetic<br>Maximum Dose Calculator</h1>
+    <p>Department of Anesthesia, University of Iowa Health Care</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="calc">
+    <label for="wt">Patient weight</label>
+    <div class="wrow">
+      <input id="wt" type="number" inputmode="decimal" min="0" max="200" step="0.1" value="14">
+      <span class="unit">kg</span>
+    </div>
+    <label class="epi" for="epi">
+      <input id="epi" type="checkbox">
+      <span>Agent contains epinephrine</span>
+    </label>
+  </div>
+
+  <h2 id="hdr">Maximum allowable volume at 14.0 kg</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Agent</th>
+        <th class="r">Limit</th>
+        <th class="r">Maximum volume</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <div class="note">
+    <b>Doses add up across agents.</b>
+    Give more than one local anesthetic and the percentages combine. Add the percentage of the maximum
+    used for every agent, and keep the total under 100 percent.
+  </div>
+
+  <h2>Before you use this</h2>
+  <ul>
+    <li>This calculator supports clinical judgement and never replaces it.</li>
+    <li>It does not apply to epidural or continuous local anesthetic infusions.</li>
+    <li>Marcaine is a brand name for bupivacaine. The two are the same drug.</li>
+    <li>Enter every prior administration, including regional blocks and doses the surgical team gives.</li>
+  </ul>
+
+  <a class="dl" href="Local-Anesthetic-Max-Dose-Calculator.xlsx" download>
+    Download the full spreadsheet
+    <span>Excel workbook with cumulative dose tracking across all agents</span>
+  </a>
+
+  <footer>
+    <b>Strengthening Local Anesthetic Dose Tracking in the Pediatric Operating Room:
+    From Manual Calculation to EHR-Integrated Real-Time Display</b><br>
+    Alfredo Camargo Rodrigues, MD &nbsp;&#9679;&nbsp; Bryan S. Brindeiro, MD &nbsp;&#9679;&nbsp; James M. Blum, MD<br>
+    ANESTHESIOLOGY 2026 Annual Meeting, San Diego.
+    Contact <b>alfredo-camargorodrigues@uiowa.edu</b>
+  </footer>
+
+</div>
+
+<script>
+  var AGENTS = [
+    { name:'Lidocaine 0.5%',    conc:'5 mg/mL',   plain:{mgkg:4.5, mlkg:0.90,  cap:60,    mgcap:300},
+      epi:{mgkg:7,   mlkg:1.40,  cap:100,   mgcap:500} },
+    { name:'Lidocaine 1%',      conc:'10 mg/mL',  plain:{mgkg:4.5, mlkg:0.45,  cap:30,    mgcap:300},
+      epi:{mgkg:7,   mlkg:0.70,  cap:50,    mgcap:500} },
+    { name:'Lidocaine 2%',      conc:'20 mg/mL',  plain:{mgkg:4.5, mlkg:0.225, cap:15,    mgcap:300},
+      epi:{mgkg:7,   mlkg:0.35,  cap:25,    mgcap:500} },
+    { name:'Bupivacaine 0.25%', conc:'2.5 mg/mL', plain:{mgkg:2.5, mlkg:1.00,  cap:60,    mgcap:150},
+      epi:{mgkg:3,   mlkg:1.20,  cap:90,    mgcap:225} },
+    { name:'Bupivacaine 0.5%',  conc:'5 mg/mL',   plain:{mgkg:2.5, mlkg:0.50,  cap:30,    mgcap:150},
+      epi:{mgkg:3,   mlkg:0.60,  cap:45,    mgcap:225} },
+    { name:'Ropivacaine 0.2%',  conc:'2 mg/mL',   plain:{mgkg:3,   mlkg:1.50,  cap:112.5, mgcap:225},
+      epi:{mgkg:3.5, mlkg:1.75,  cap:112.5, mgcap:225} }
+  ];
+
+  var wt = document.getElementById('wt');
+  var epi = document.getElementById('epi');
+  var rows = document.getElementById('rows');
+  var hdr = document.getElementById('hdr');
+
+  function render(){
+    var w = parseFloat(wt.value);
+    if (!(w > 0)) w = 0;
+    var useEpi = epi.checked;
+    hdr.textContent = 'Maximum allowable volume at ' + w.toFixed(1) + ' kg'
+                    + (useEpi ? ', with epinephrine' : '');
+    var html = '';
+    for (var i = 0; i < AGENTS.length; i++){
+      var a = AGENTS[i];
+      var d = useEpi ? a.epi : a.plain;
+      var raw = w * d.mlkg;
+      var ml = Math.min(d.cap, raw);
+      var capped = raw > d.cap;
+      html += '<tr class="' + (capped ? 'capped' : '') + '">'
+           +    '<td class="agent">' + a.name + '<small>' + a.conc + '</small></td>'
+           +    '<td class="r mg">' + d.mgkg + ' mg/kg<br>max ' + d.mgcap + ' mg</td>'
+           +    '<td class="r ml">' + ml.toFixed(1) + ' mL'
+           +      (capped ? '<span class="capnote">absolute maximum reached</span>' : '')
+           +    '</td>'
+           +  '</tr>';
+    }
+    rows.innerHTML = html;
+  }
+
+  wt.addEventListener('input', render);
+  epi.addEventListener('change', render);
+  render();
+</script>
+
+</body>
+</html>
